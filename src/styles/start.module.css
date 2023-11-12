@@ -1,0 +1,40 @@
+.glass {
+    /* background: rgba(255, 255, 255, 0.55); */
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 30px #4747470b;
+    backdrop-filter: blur(7.1px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    @apply border-4 border-gray-50 shrink-0 w-[30%] rounded-3xl py-10 px-7 min-w-max inline-block h-auto;
+}
+
+.span {
+    color: #59981A
+}
+
+span {
+    font-family: 'Poppins', sans-serif;
+    font-weight: semibold;
+}
+
+.btn {
+    @apply bg-indigo-700 w-3/4 py-4 rounded-lg text-gray-50 text-xl shadow-sm text-center !important;
+    border-radius: 50px !important;
+
+}
+
+.backbtn {
+    @apply bg-indigo-700 p-5 shadow-xl !important;
+    border-radius: 50px !important;
+
+}
+
+.btn:hover {
+    background-color: #59981A !important;
+    border: #59981A 1px solid !important;
+}
+
+.backbtn:hover {
+    background-color: #59981A !important;
+    border: #59981A 1px solid !important;
+}

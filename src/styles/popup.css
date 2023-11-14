@@ -1,0 +1,5 @@
+.popup {
+    background-color: var(--theme-color);
+    color: var(--text-color);
+    border-radius: 20px;
+}

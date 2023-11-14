@@ -3,6 +3,14 @@ import { Start, ViewFile, ManageFile, PageNotFound } from "../../../scenes";
 /** root routes */
 export const routes = [
 	{
+		path: "/",
+		component: <Start />,
+		exact: true,
+		topbar: false,
+		sidebar: false,
+		footer: false,
+	},
+	{
 		path: "/start",
 		component: <Start />,
 		exact: true,
@@ -22,9 +30,9 @@ export const routes = [
 		path: "/adminmngt",
 		component: <ManageFile />,
 		exact: true,
-		topbar: false,
-		sidebar: false,
-		footer: false,
+		topbar: true,
+		sidebar: true,
+		footer: true,
 	},
 	{
 		path: "*",

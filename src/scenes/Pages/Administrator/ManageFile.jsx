@@ -1,7 +1,7 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { v4 as uuidv4 } from "uuid";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header, Spinner } from "../../../components";
 import { tokens } from "../../../Theme";
 import * as MdIcons from "react-icons/md";
@@ -12,13 +12,13 @@ import {
 } from "../../../redux/reducers/file/fileApiSlice";
 import Swal from "sweetalert2";
 import { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import FileDownload from "js-file-download";
 
 export default function ManageFile() {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const [pageSize, setPageSize] = useState(6);
 	const [upload, { isLoading: isSending }] = useUploadFileMutation();
 	const [download, { isLoading: isDownloading }] =
@@ -106,7 +106,7 @@ export default function ManageFile() {
 		refetch();
 	}, [refetch]);
 
-	const columns = useMemo(() => [
+	const columns = [
 		{
 			field: "fileName",
 			headerName: "Name",
@@ -206,7 +206,7 @@ export default function ManageFile() {
 				);
 			},
 		},
-	]);
+	];
 
 	return (
 		<Box

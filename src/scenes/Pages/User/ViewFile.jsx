@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Spinner } from "../../../components";
 import { tokens } from "../../../Theme";
@@ -80,7 +80,8 @@ export default function ViewFile() {
 		refetch();
 	}, [refetch]);
 
-	const columns = useMemo(() => [
+	// const columns = useMemo(() => [
+	const columns = [
 		{
 			field: "fileName",
 			headerName: "Name",
@@ -180,7 +181,7 @@ export default function ViewFile() {
 				);
 			},
 		},
-	]);
+	];
 
 	return (
 		<>

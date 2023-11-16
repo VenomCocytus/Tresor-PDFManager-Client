@@ -3,6 +3,7 @@ export { default as Start } from "./Pages/Start/Start";
 
 // Data tables
 export { default as ManageFile } from "./Pages/Administrator/ManageFile";
+export { default as FileUpload } from "./Pages/Administrator/FileUpload";
 export { default as ViewFile } from "./Pages/User/ViewFile";
 
 // Utils

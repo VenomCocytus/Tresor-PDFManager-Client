@@ -1,4 +1,10 @@
-import { Start, ViewFile, ManageFile, PageNotFound } from "../../../scenes";
+import {
+	Start,
+	ViewFile,
+	ManageFile,
+	PageNotFound,
+	FileUpload,
+} from "../../../scenes";
 
 /** root routes */
 export const routes = [
@@ -29,6 +35,14 @@ export const routes = [
 	{
 		path: "/adminmngt",
 		component: <ManageFile />,
+		exact: true,
+		topbar: true,
+		sidebar: true,
+		footer: true,
+	},
+	{
+		path: "/file_upload",
+		component: <FileUpload />,
 		exact: true,
 		topbar: true,
 		sidebar: true,

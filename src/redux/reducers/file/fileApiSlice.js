@@ -9,11 +9,17 @@ const apiWithTags = apiSlice.enhanceEndpoints({
 export const fileApiSlice = apiWithTags.injectEndpoints({
 	endpoints: (builder) => ({
 		uploadFile: builder.mutation({
-			query: (data) => ({
-				url: `${File_Url}/uploads`,
-				method: "POST",
-				body: data,
-			}),
+			query: (formData) => {
+				return {
+					url: `${File_Url}/uploads`,
+					method: "POST",
+					body: formData,
+					// headers: {
+					// 	"Content-Type":
+					// 		"multipart/form-data; boundary=<calculated when request is sent>",
+					// },
+				};
+			},
 		}),
 		fetchAllFiles: builder.query({
 			query: () => `${File_Url}/files`,
@@ -24,8 +30,14 @@ export const fileApiSlice = apiWithTags.injectEndpoints({
 		fetchFileByName: builder.query({
 			query: (filename) => `${File_Url}/files/${filename}`,
 		}),
-		downloadFileByName: builder.query({
-			query: (filename) => `${File_Url}/files/get/${filename}`,
+		// downloadFileByName: builder.query({
+		// 	query: (filename) => `${File_Url}/files/get/${filename}`,
+		// }),
+		downloadFileByName: builder.mutation({
+			query: (filename) => ({
+				url: `${File_Url}/files/download/${filename}`,
+				method: "POST",
+			}),
 		}),
 		renameFileByName: builder.mutation({
 			query: ({ data, filename }) => ({
@@ -60,7 +72,7 @@ export const {
 	useFetchAllFilesQuery,
 	useFetchAllAvailableFilesQuery,
 	useFetchFileByNameQuery,
-	useDownloadFileByNameQuery,
+	useDownloadFileByNameMutation,
 	useRenameFileByNameMutation,
 	useDeleteFileByNameMutation,
 	useArchiveFileByNameMutation,

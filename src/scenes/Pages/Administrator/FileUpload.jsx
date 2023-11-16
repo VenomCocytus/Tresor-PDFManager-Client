@@ -1,29 +1,24 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
+import { Box, Button, useTheme } from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { v4 as uuidv4 } from "uuid";
 import React, { useEffect, useMemo, useState } from "react";
 import { Header, Spinner } from "../../../components";
 import { tokens } from "../../../Theme";
 import * as MdIcons from "react-icons/md";
 import {
-	useDownloadFileByNameMutation,
 	useFetchAllFilesQuery,
 	useUploadFileMutation,
 } from "../../../redux/reducers/file/fileApiSlice";
 import Swal from "sweetalert2";
 import { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import FileDownload from "js-file-download";
 
-export default function ManageFile() {
+export default function FileUpload() {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
-	const navigate = useNavigate();
-	const [pageSize, setPageSize] = useState(6);
+	const [pageSize, setPageSize] = useState(5);
 	const [upload, { isLoading: isSending }] = useUploadFileMutation();
-	const [download, { isLoading: isDownloading }] =
-		useDownloadFileByNameMutation();
 	const { data, isLoading, refetch } = useFetchAllFilesQuery();
+	console.log(data);
 
 	const generateRowId = () => {
 		return uuidv4();
@@ -107,93 +102,19 @@ export default function ManageFile() {
 	}, [refetch]);
 
 	const columns = useMemo(() => [
-		{
-			field: "fileName",
-			headerName: "Name",
-			width: 350,
-			editable: true,
-			cellClassName: "name-column--cell",
-			headerAlign: "center",
-		},
-		{
-			field: "fileSize",
-			headerName: "Size",
-			width: 100,
-			headerAlign: "center",
-			alignItems: "center",
-		},
+		{ field: "fileName", headerName: "Name", width: 250, editable: true },
+		{ field: "fileSize", headerName: "Size", width: 100 },
 		{
 			field: "fileIsArchived",
 			headerName: "Archived",
-			width: 200,
+			width: 100,
 			type: "boolean",
 			editable: true,
-			headerAlign: "center",
-			renderCell: ({ row: { fileIsArchived } }) => {
-				return (
-					<Box
-						width='60%'
-						m='0 auto'
-						p='5px'
-						display='flex'
-						justifyContent='center'
-						backgroundColor={
-							fileIsArchived === true ? colors.redAccent[400] : colors.greenAccent[400]
-						}
-						borderRadius='10px'
-					>
-						{fileIsArchived === true && <MdIcons.MdOutlineAdminPanelSettings />}
-						{fileIsArchived === false && <MdIcons.MdAdminPanelSettings />}
-						<Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-							{fileIsArchived === true && "Archived"}
-							{fileIsArchived === false && "Unarchived"}
-						</Typography>
-					</Box>
-				);
-			},
 		},
 		{
 			field: "createdAt",
 			headerName: "Created At",
-			width: 200,
-			headerAlign: "center",
-		},
-		{
-			field: "actions",
-			headerName: "Actions",
-			flex: 1,
-			headerAlign: "center",
-			align: "center",
-			renderCell: (params) => {
-				const rowName = params.row.fileName;
-
-				const handleDownload = async () => {
-					try {
-						const response = await download(rowName);
-						FileDownload(response.data, `${rowName}`);
-						console.log(rowName);
-					} catch (error) {
-						console.error("Error downloading file", error);
-					}
-				};
-
-				return (
-					<>
-						<GridActionsCellItem
-							icon={<MdIcons.MdCloudDownload size={15} />}
-							label='Delete'
-							onClick={handleDownload}
-						/>
-						<IconButton
-						// onClick={() => {
-						// 	navigate(`/users/${params._id}`);
-						// }}
-						>
-							<MdIcons.MdInfoOutline />
-						</IconButton>
-					</>
-				);
-			},
+			width: 100,
 		},
 	]);
 
@@ -242,7 +163,7 @@ export default function ManageFile() {
 
 			<Toaster position='top-center' reverseOrder={false}></Toaster>
 
-			{isLoading || isSending || isDownloading ? (
+			{isLoading || isSending ? (
 				<Spinner />
 			) : (
 				<Box
@@ -283,11 +204,10 @@ export default function ManageFile() {
 							Toolbar: GridToolbar,
 						}}
 						autoHeight
-						sx={{ "--DataGrid-overlayHeight": "300px" }}
 						// autoPageSize
 						pageSize={pageSize}
 						onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-						rowsPerPageOptions={[5, 6, 10, 20, 30]}
+						rowsPerPageOptions={[5, 10, 20, 30]}
 						pagination
 					/>
 				</Box>

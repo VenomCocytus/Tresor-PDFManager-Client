@@ -14,10 +14,6 @@ export const fileApiSlice = apiWithTags.injectEndpoints({
 					url: `${File_Url}/uploads`,
 					method: "POST",
 					body: formData,
-					// headers: {
-					// 	"Content-Type":
-					// 		"multipart/form-data; boundary=<calculated when request is sent>",
-					// },
 				};
 			},
 		}),
@@ -30,13 +26,11 @@ export const fileApiSlice = apiWithTags.injectEndpoints({
 		fetchFileByName: builder.query({
 			query: (filename) => `${File_Url}/files/${filename}`,
 		}),
-		// downloadFileByName: builder.query({
-		// 	query: (filename) => `${File_Url}/files/get/${filename}`,
-		// }),
 		downloadFileByName: builder.mutation({
 			query: (filename) => ({
 				url: `${File_Url}/files/download/${filename}`,
 				method: "POST",
+				responseHandler: (response) => response.blob(),
 			}),
 		}),
 		renameFileByName: builder.mutation({

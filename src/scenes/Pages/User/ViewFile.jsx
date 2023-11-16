@@ -142,13 +142,24 @@ export default function ViewFile() {
 				const rowName = params.row.fileName;
 
 				const handleDownload = async () => {
-					try {
-						const response = await download(rowName);
-						FileDownload(response.data, `${rowName}`);
-						console.log(rowName);
-					} catch (error) {
-						console.error("Error downloading file", error);
-					}
+					let downloadPromise = download(rowName).then((res) => {
+						if (res.error) {
+							console.log(res.error);
+
+							Toast.fire({
+								icon: "error",
+								title: "Error downloading the file",
+							});
+						} else {
+							downloadPromise.then(function () {
+								FileDownload(res.data, `${rowName}`);
+								Toast.fire({
+									icon: "success",
+									title: "Successfully download the file",
+								});
+							});
+						}
+					});
 				};
 
 				return (

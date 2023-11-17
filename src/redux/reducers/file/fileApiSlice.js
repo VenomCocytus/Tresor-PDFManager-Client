@@ -50,12 +50,22 @@ export const fileApiSlice = apiWithTags.injectEndpoints({
 			query: (filename) => ({
 				url: `${File_Url}/files/${filename}/archive`,
 				method: "PUT",
+				responseHandler: (response) => response.text(),
 			}),
 		}),
 		unarchiveFileByName: builder.mutation({
 			query: (filename) => ({
 				url: `${File_Url}/files/${filename}/unarchive`,
 				method: "PUT",
+				responseHandler: (response) => response.text(),
+			}),
+		}),
+		updateFileByName: builder.mutation({
+			query: ({ filename, formData }) => ({
+				url: `${File_Url}/files/${filename}/update`,
+				method: "PUT",
+				body: formData,
+				responseHandler: (response) => response.text(),
 			}),
 		}),
 	}),
@@ -71,4 +81,5 @@ export const {
 	useDeleteFileByNameMutation,
 	useArchiveFileByNameMutation,
 	useUnarchiveFileByNameMutation,
+	useUpdateFileByNameMutation,
 } = fileApiSlice;

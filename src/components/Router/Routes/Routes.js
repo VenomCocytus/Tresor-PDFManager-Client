@@ -4,6 +4,7 @@ import {
 	ManageFile,
 	PageNotFound,
 	FileUpload,
+	FileDetails,
 } from "../../../scenes";
 
 /** root routes */
@@ -43,6 +44,14 @@ export const routes = [
 	{
 		path: "/file_upload",
 		component: <FileUpload />,
+		exact: true,
+		topbar: true,
+		sidebar: true,
+		footer: true,
+	},
+	{
+		path: "/adminmngt/:file_detail_name",
+		component: <FileDetails />,
 		exact: true,
 		topbar: true,
 		sidebar: true,

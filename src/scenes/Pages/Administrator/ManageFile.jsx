@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { v4 as uuidv4 } from "uuid";
 import React, { useEffect, useState } from "react";
@@ -6,24 +6,137 @@ import { Header, Spinner } from "../../../components";
 import { tokens } from "../../../Theme";
 import * as MdIcons from "react-icons/md";
 import {
+	useArchiveFileByNameMutation,
 	useDownloadFileByNameMutation,
 	useFetchAllFilesQuery,
+	useUnarchiveFileByNameMutation,
 	useUploadFileMutation,
 } from "../../../redux/reducers/file/fileApiSlice";
 import Swal from "sweetalert2";
 import { Toaster } from "react-hot-toast";
 // import { useNavigate } from "react-router-dom";
 import FileDownload from "js-file-download";
+import { useNavigate } from "react-router-dom";
 
 export default function ManageFile() {
 	const theme = useTheme();
 	const colors = tokens(theme.palette.mode);
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [pageSize, setPageSize] = useState(6);
 	const [upload, { isLoading: isSending }] = useUploadFileMutation();
 	const [download, { isLoading: isDownloading }] =
 		useDownloadFileByNameMutation();
 	const { data, isLoading, refetch } = useFetchAllFilesQuery();
+
+	const [archiveFile] = useArchiveFileByNameMutation();
+	const [unArchivedFile] = useUnarchiveFileByNameMutation();
+
+	const showConfirmationPopup = (isArchived) => {
+		return new Promise((resolve, reject) => {
+			Swal.fire({
+				title: "Are you sure?",
+				text: isArchived
+					? "Are you sure of your decision?"
+					: "You won't be able to revert this!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: isArchived ? colors.greenAccent[300] : "#d33",
+				cancelButtonColor: "#3085d6",
+				confirmButtonText: isArchived ? "Yes, restore it!" : "Yes, delete it!",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					resolve();
+				} else {
+					reject();
+				}
+			});
+		});
+	};
+
+	const showApprobationPopup = () => {
+		return new Promise((resolve, reject) => {
+			Swal.fire({
+				title: "Are you sure you want to upload this file?",
+				icon: "question",
+				showCancelButton: true,
+				confirmButtonText: "Yes, I'm sure",
+				cancelButtonText: "No, I'm not",
+				customClass: {
+					popup: "popup",
+				},
+			}).then((result) => {
+				if (result.isConfirmed) {
+					resolve();
+				} else {
+					reject();
+				}
+			});
+		});
+	};
+
+	const Toast = Swal.mixin({
+		toast: true,
+		position: "top-end",
+		showConfirmButton: false,
+		timer: 3000,
+		timerProgressBar: true,
+		didOpen: (toast) => {
+			toast.addEventListener("mouseenter", Swal.stopTimer);
+			toast.addEventListener("mouseleave", Swal.resumeTimer);
+		},
+	});
+
+	const handleDelete = async ({ filename, isArchived }) => {
+		try {
+			await showConfirmationPopup(isArchived);
+
+			let archivePromise = archiveFile(filename).then((res) => {
+				if (res.error) {
+					console.log(res.error);
+
+					refetch();
+					Toast.fire({
+						icon: "error",
+						title: "Your file hasn't been deleted.",
+					});
+				} else {
+					archivePromise.then(function () {
+						navigate("/adminmngt");
+						Toast.fire({
+							icon: "success",
+							title: "Your file has been deleted.",
+						});
+					});
+				}
+			});
+		} catch (error) {}
+	};
+
+	const handleRestore = async ({ filename, isArchived }) => {
+		try {
+			await showConfirmationPopup(isArchived);
+
+			let archivePromise = unArchivedFile(filename).then((res) => {
+				if (res.error) {
+					console.log(res.error);
+
+					refetch();
+					Toast.fire({
+						icon: "error",
+						title: "Your file hasn't been restored.",
+					});
+				} else {
+					archivePromise.then(function () {
+						navigate("/adminmngt");
+						Toast.fire({
+							icon: "success",
+							title: "Your file has been restored.",
+						});
+					});
+				}
+			});
+		} catch (error) {}
+	};
 
 	const generateRowId = () => {
 		return uuidv4();
@@ -53,39 +166,6 @@ export default function ManageFile() {
 					});
 				});
 			}
-		});
-	};
-
-	const Toast = Swal.mixin({
-		toast: true,
-		position: "top-end",
-		showConfirmButton: false,
-		timer: 3000,
-		timerProgressBar: true,
-		didOpen: (toast) => {
-			toast.addEventListener("mouseenter", Swal.stopTimer);
-			toast.addEventListener("mouseleave", Swal.resumeTimer);
-		},
-	});
-
-	const showApprobationPopup = () => {
-		return new Promise((resolve, reject) => {
-			Swal.fire({
-				title: "Are you sure you want to upload this file?",
-				icon: "question",
-				showCancelButton: true,
-				confirmButtonText: "Yes, I'm sure",
-				cancelButtonText: "No, I'm not",
-				customClass: {
-					popup: "popup",
-				},
-			}).then((result) => {
-				if (result.isConfirmed) {
-					resolve();
-				} else {
-					reject();
-				}
-			});
 		});
 	};
 
@@ -166,6 +246,7 @@ export default function ManageFile() {
 			align: "center",
 			renderCell: (params) => {
 				const rowName = params.row.fileName;
+				const isArchived = params.row.fileIsArchived;
 
 				const handleDownload = async () => {
 					let downloadPromise = download(rowName).then((res) => {
@@ -191,17 +272,32 @@ export default function ManageFile() {
 				return (
 					<>
 						<GridActionsCellItem
-							icon={<MdIcons.MdCloudDownload size={15} />}
+							icon={<MdIcons.MdCloudDownload size={25} />}
 							label='Delete'
 							onClick={handleDownload}
 						/>
-						<IconButton
-						// onClick={() => {
-						// 	navigate(`/users/${params._id}`);
-						// }}
-						>
-							<MdIcons.MdInfoOutline />
-						</IconButton>
+						<GridActionsCellItem
+							icon={<MdIcons.MdInfoOutline size={25} />}
+							label='Info'
+							onClick={() => {
+								navigate(`/adminmngt/${rowName}`);
+							}}
+						/>
+						<GridActionsCellItem
+							icon={
+								isArchived ? (
+									<MdIcons.MdOutlineRestoreFromTrash size={25} />
+								) : (
+									<MdIcons.MdDeleteOutline size={25} />
+								)
+							}
+							label='State'
+							onClick={() => {
+								isArchived
+									? handleRestore({ rowName, isArchived })
+									: handleDelete({ rowName, isArchived });
+							}}
+						/>
 					</>
 				);
 			},
@@ -286,7 +382,7 @@ export default function ManageFile() {
 					}}
 				>
 					<DataGrid
-						checkboxSelection={true}
+						checkboxSelection={false}
 						columns={columns}
 						rows={data}
 						getRowId={(row) => row._id || generateRowId()}

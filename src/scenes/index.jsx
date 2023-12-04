@@ -9,7 +9,7 @@ export { default as RenameFile } from "./Pages/Administrator/Tab/RenameFile";
 export { default as FileDetailTable } from "./Pages/Administrator/Tab/FileDetailTable";
 export { default as ViewFile } from "./Pages/User/ViewFile";
 export { default as ReadFile } from "./Pages/User/ReadFile";
-
+export { default as PDFViewer } from "./Pages/Utils/PDFViewer";
 // Utils
 export { default as PageNotFound } from "./Pages/Utils/PageNotFound";
 export { default as Unauthorized } from "./Pages/Utils/Unauthorized";

@@ -2,7 +2,8 @@ import { Box, Tab, Tabs, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { tokens } from "../../../Theme";
 import { Header, InAppBackButton } from "../../../components";
-import { RenameFile, FileDetailTable } from "../../../scenes";
+import { RenameFile, FileDetailTable, PDFViewer } from "../../../scenes";
+import PDFViewerComponent from "../Utils/PDFViewer";
 
 const TabPanel = ({ children, value, index, ...other }) => {
 	return (
@@ -115,6 +116,10 @@ export default function FileDetails() {
 
 			<Box display='flex' justifyContent='flex-end' mt={10}>
 				<InAppBackButton path='adminmngt' />
+			</Box>
+
+			<Box>
+				<PDFViewerComponent />
 			</Box>
 		</Box>
 	);

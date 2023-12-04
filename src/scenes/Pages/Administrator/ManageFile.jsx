@@ -327,10 +327,10 @@ export default function ManageFile() {
 							justifyContent: "space-between",
 							boxShadow: "20px",
 						}}
-						onClick={() => {
-							document.getElementById("pdf-file").click();
-						}}
-						// onClick={() => navigate("/file_upload")}
+						// onClick={() => {
+						// 	document.getElementById("pdf-file").click();
+						// }}
+						onClick={() => navigate("/file_upload")}
 					>
 						<MdIcons.MdOutlineUploadFile sx={{ marginRight: "5px" }} />
 						<span className='mr-1'>Upload a file</span>

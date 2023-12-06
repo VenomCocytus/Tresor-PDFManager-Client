@@ -1,0 +1,3 @@
+.profile_img {
+    @apply w-40 cursor-pointer;
+}
